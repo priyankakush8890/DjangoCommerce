@@ -1,0 +1,36 @@
+<style>
+    /* Status Tracker Styles */
+    .track-line { height: 4px !important; background-color: #eee; position: relative; }
+    .dot { height: 15px; width: 15px; margin-left: -7px; top: -6px; position: absolute; border-radius: 50%; }
+    .step-active { background-color: #0d6efd; box-shadow: 0 0 10px rgba(13, 110, 253, 0.5); }
+    .step-inactive { background-color: #ddd; }
+    .status-text { font-size: 12px; margin-top: 10px; font-weight: 600; color: #666; }
+    .active-text { color: #0d6efd; }
+</style>
+
+<div class="card shadow-sm border-0 rounded-4 p-4 mt-4 bg-white">
+    <h5 class="fw-bold mb-4">Track Your Order #{{ order.id }}</h5>
+    
+    <div class="d-flex justify-content-between align-items-center position-relative mb-5">
+        <div class="track-line w-100 position-absolute"></div>
+        
+        <div class="position-relative text-center">
+            <div class="dot {% if order.status == 'Pending' or order.status == 'Shipped' or order.status == 'Delivered' %}step-active{% else %}step-inactive{% endif %}"></div>
+            <div class="status-text {% if order.status == 'Pending' %}active-text{% endif %}">Order Placed</div>
+        </div>
+
+        <div class="position-relative text-center">
+            <div class="dot {% if order.status == 'Shipped' or order.status == 'Delivered' %}step-active{% else %}step-inactive{% endif %}"></div>
+            <div class="status-text {% if order.status == 'Shipped' %}active-text{% endif %}">Shipped</div>
+        </div>
+
+        <div class="position-relative text-center">
+            <div class="dot {% if order.status == 'Delivered' %}step-active{% else %}step-inactive{% endif %}"></div>
+            <div class="status-text {% if order.status == 'Delivered' %}active-text{% endif %}">Delivered</div>
+        </div>
+    </div>
+
+    <div class="alert {% if order.status == 'Delivered' %}alert-success{% else %}alert-primary{% endif %} rounded-pill text-center py-2">
+        Current Status: <strong>{{ order.status }}</strong>
+    </div>
+</div>

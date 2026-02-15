@@ -1,0 +1,35 @@
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h5>Filter Products</h5>
+                <form method="get">
+                    {{ filter.form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100">Apply</button>
+                    <a href="{% url 'product_list' %}" class="btn btn-sm btn-link text-center d-block mt-2">Reset</a>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="row">
+                {% for product in filter.qs %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                            <div class="card-body">
+                                <h6>{{ product.name }}</h6>
+                                <p class="text-success">₹{{ product.price }}</p>
+                                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-sm btn-outline-primary">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12 text-center">
+                        <p class="text-muted">No products found matching those filters.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

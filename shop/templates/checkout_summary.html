@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Summary | SHOP CART</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), 
+                        url('https://images.unsplash.com/photo-1491933382434-500287f9b54b?q=80&w=1600') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+        }
+        .summary-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 30px;
+            margin-top: 50px;
+        }
+        .product-item {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 15px 0;
+        }
+        .pay-btn {
+            background: #ff4d4d;
+            border: none;
+            padding: 15px;
+            font-weight: 700;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+        .pay-btn:hover { background: #ff3333; transform: scale(1.02); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="summary-card shadow-lg">
+                    <h2 class="text-center fw-bold mb-4" style="color: #ff4d4d;">ORDER SUMMARY</h2>
+                    
+                    {% for item in products %}
+                    <div class="product-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0 fw-bold">{{ item.product.name }}</h5>
+                            <small class="text-muted">Category: {{ item.product.category }}</small>
+                        </div>
+                        <div class="text-end">
+                            <span class="d-block fw-bold">₹{{ item.product.price }} x {{ item.quantity }}</span>
+                            <span class="text-warning">Subtotal: ₹{{ item.subtotal }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <div class="mt-4 pt-3 border-top">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="fw-bold">Total Amount:</h3>
+                            <h2 class="fw-bold text-success">₹{{ total_amount }}</h2>
+                        </div>
+                        
+                        <button id="pay-btn" class="pay-btn w-100 text-white">
+                            <i class="fas fa-lock me-2"></i> PAY NOW ₹{{ total_amount }}
+                        </button>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'cart_view' %}" class="text-decoration-none text-muted small">
+                            <i class="fas fa-arrow-left me-1"></i> Back to Cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.getElementById('pay-btn').onclick = function(e){
+        var options = {
+            "key": "{{ razorpay_key }}",
+            "amount": "{{ razorpay_amount }}",
+            "currency": "INR",
+            "name": "SHOP CART",
+            "order_id": "{{ order_id }}",
+            "description": "Order Payment",
+            "handler": function (response){
+                // REDIRECTION KI JAGAH FORM SUBMIT KAREIN (POST KE LIYE)
+                var form = document.createElement("form");
+                form.method = "POST";
+                form.action = "{% url 'payment_success' %}";
+
+                // Django security ke liye CSRF token zaroori hai
+                var csrfInput = document.createElement("input");
+                csrfInput.type = "hidden";
+                csrfInput.name = "csrfmiddlewaretoken";
+                csrfInput.value = "{{ csrf_token }}";
+                form.appendChild(csrfInput);
+
+                // Razorpay ka data form mein bharo
+                var params = {
+                    "razorpay_payment_id": response.razorpay_payment_id,
+                    "razorpay_order_id": response.razorpay_order_id,
+                    "razorpay_signature": response.razorpay_signature
+                };
+
+                for (var key in params) {
+                    var input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = key;
+                    input.value = params[key];
+                    form.appendChild(input);
+                }
+
+                document.body.appendChild(form);
+                form.submit(); // Ye 100% POST request bhejega
+            },
+            "prefill": {
+                "name": "{{ user.username }}",
+                "email": "{{ user.email }}"
+            },
+            "theme": { "color": "#ff4d4d" }
+        };
+        
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+        e.preventDefault();
+    }
+</script>
+</body>
+</html>

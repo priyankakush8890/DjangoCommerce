@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product | AI Powered</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card { border-radius: 15px; overflow: hidden; }
+        .bg-dark { background-color: #1a1a1a !important; }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white p-3">
+                    <h4 class="mb-0 text-center">📦 Add New Product</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form id="productForm" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="form-group mb-3">
+                            <label class="fw-bold">Product Name</label>
+                            <input type="text" name="name" id="id_name" class="form-control" placeholder="e.g. Nike Air Max 270" required>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="fw-bold">Category</label>
+                            <select name="category" id="id_category" class="form-select">
+                                <option value="Electronics">Electronics</option>
+                                <option value="Fashion">Fashion</option>
+                                <option value="Home Decor">Home Decor</option>
+                                <option value="Footwear">Footwear</option>
+                            </select>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="fw-bold">Price ($)</label>
+                                <input type="number" name="price" class="form-control" step="0.01" required>
+                            </div>
+                            <div class="col">
+                                <label class="fw-bold">Stock Quantity</label>
+                                <input type="number" name="stock" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="fw-bold">Product Description</label>
+                                <button type="button" id="ai-btn" class="btn btn-outline-primary btn-sm fw-bold">
+                                    ✨ AI Generate with Gemini
+                                </button>
+                            </div>
+                            <textarea name="description" id="id_description" class="form-control" rows="5" placeholder="Manually enter or use AI to generate..."></textarea>
+                            <small id="ai-status" class="text-muted mt-1 d-block"></small>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="fw-bold">Product Image</label>
+                            <input type="file" name="image" class="form-control" accept="image/*">
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold">🚀 Save Product to Database</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <a href="{% url 'index' %}" class="text-decoration-none text-muted">← Back to Shop</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('ai-btn').addEventListener('click', function() {
+    const productName = document.getElementById('id_name').value;
+    const category = document.getElementById('id_category').value;
+    const descField = document.getElementById('id_description');
+    const statusMsg = document.getElementById('ai-status');
+    const btn = this;
+
+    if (!productName) {
+        alert("Please enter a product name first!");
+        return;
+    }
+
+    // UI Feedback
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Gemini is writing...';
+    btn.disabled = true;
+    statusMsg.innerText = "Connecting to gemini-3-flash-preview...";
+
+    fetch('/generate-ai-description/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ name: productName, category: category })
+    })
+    .then(async response => {
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || 'API Error');
+        }
+        return data;
+    })
+    .then(data => {
+        descField.value = data.description;
+        statusMsg.className = "text-success mt-1 d-block";
+        statusMsg.innerText = "✅ Description Generated Successfully!";
+    })
+    .catch(error => {
+        console.error('Debug Log:', error);
+        alert("System Error: " + error.message);
+        statusMsg.className = "text-danger mt-1 d-block";
+        statusMsg.innerText = "❌ Generation Failed.";
+    })
+    .finally(() => {
+        btn.innerHTML = '✨ AI Generate with Gemini';
+        btn.disabled = false;
+    });
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

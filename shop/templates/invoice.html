@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+        @page {
+            size: a4 portrait;
+            margin: 1cm;
+        }
+        body {
+            font-family: 'DejaVu Sans', sans-serif;
+            color: #333;
+            line-height: 1.5;
+        }
+        .invoice-box {
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #eee;
+        }
+        .header {
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        /* Logo Styling */
+        .logo {
+            width: 150px;
+            height: auto;
+        }
+        .title {
+            font-size: 28px;
+            color: #007bff;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+        .details-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .items-table th {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            text-align: left;
+        }
+        .items-table td {
+            border: 1px solid #dee2e6;
+            padding: 10px;
+        }
+        .total-section {
+            text-align: right;
+            margin-top: 30px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-box">
+        <div class="header">
+            <table class="details-table">
+                <tr>
+                    <td>
+                        <img src="static/images/logo.png" class="logo" alt="Logo">
+                    </td>
+                    <td class="title" style="text-align: center;">SHOP CART</td>
+                    <td style="text-align: right;">
+                        <strong>Invoice #:</strong> {{ order.order_id|default:order.id }}<br>
+                        <strong>Date:</strong> {{ order.created_at|date:"d M Y" }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table class="details-table">
+            <tr>
+                <td style="width: 50%;">
+                    <strong>Billed To:</strong><br>
+                    {{ order.full_name|default:order.user.get_full_name|default:order.user.username }}<br>
+                    {{ order.address }}<br>
+                    {{ order.email|default:order.user.email }}<br>
+                    Phone: {{ order.phone_number }}
+                </td>
+                <td style="text-align: right; width: 50%;">
+                    <strong>From:</strong><br>
+                    <strong>Shop Cart India Pvt Ltd</strong><br>
+                    Technical Support Wing<br>
+                    Bangalore, Karnataka - 560001<br>
+                    support@shopcart.com
+                </td>
+            </tr>
+        </table>
+
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>&#8377;{{ item.price }}</td>
+                    <td>&#8377;{{ item.get_total_item_price }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center;">No items found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="total-section">
+            <p style="font-size: 14px; color: #555; font-weight: normal;">
+                Subtotal: &#8377;{{ order.get_total }}
+            </p>
+
+            {% if order.coupon %}
+            <p style="font-size: 14px; color: #dc3545; font-weight: normal;">
+                Discount ({{ order.coupon.code }}): -&#8377;{{ order.coupon.discount_percent }}% 
+            </p>
+            {% endif %}
+
+            <p style="border-top: 1px solid #dee2e6; padding-top: 10px;">
+                Total Paid: &#8377;{{ order.amount }}
+            </p>
+    
+            <p style="font-size: 14px; margin-top: 10px;">
+                Payment Status: 
+                {% if order.paid %}
+                <span style="color: green;">✔ PAID</span>
+                {% else %}
+                <span style="color: red;">✘ {{ order.status|upper }}</span>
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>Thank you for shopping with <strong>Shop Cart</strong>!</p>
+            <p>This is a computer-generated invoice and does not require a physical signature.</p>
+        </div>
+    </div>
+</body>
+</html>

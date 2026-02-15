@@ -1,0 +1,74 @@
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+.container { max-width: 1200px; margin: auto; }
+h1, h2 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+
+/* Product Grid */
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+.card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+.card img { max-width: 100%; height: 200px; object-fit: cover; border-radius: 5px; }
+.price { font-size: 1.2rem; color: #28a745; font-weight: bold; }
+
+/* Recommendation Section */
+.rec-section { background: #e9ecef; padding: 20px; border-radius: 10px; margin-bottom: 40px; }
+
+/* Buttons */
+.btn { display: inline-block; background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px; }
+.btn:hover { background: #0056b3; }
+
+/* Taaki labels aur inputs mix na ho jayein */
+.signup-card p {
+    margin-bottom: 0px;
+}
+.signup-card label {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 10px;
+    text-align: left;
+}
+.helptext {
+    display: block;
+    font-size: 0.7rem;
+    color: #999;
+    margin-bottom: 10px;
+}
+
+/* Help text ko hide karne ke liye */
+.helptext, .help-block {
+    display: none;
+}
+/* Bullet points ko sundar banane ke liye */
+.alert ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.input-group .form-control {
+    border-radius: 8px 0 0 8px !important;
+    border: none;
+    height: 45px;
+}
+.input-group .btn-warning {
+    border-radius: 0 8px 8px 0 !important;
+    background-color: #febd69; /* Amazon Yellow */
+    border: none;
+    color: #131921;
+}
+.input-group .btn-warning:hover {
+    background-color: #f3a847;
+}
+
+.filter-form-styling p label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #ff7f50;
+}
+.filter-form-styling p input, .filter-form-styling p select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background-color: #222;
+    color: white;
+}

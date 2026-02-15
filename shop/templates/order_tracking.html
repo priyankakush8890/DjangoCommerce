@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order #{{ order.order_id }} - AI Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .tracking-card { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .track-line { height: 4px; background-color: #e9ecef; position: absolute; top: 18px; width: 100%; z-index: 1; }
+        .track-step { z-index: 2; position: relative; }
+        .dot { height: 40px; width: 40px; background-color: #fff; border: 4px solid #e9ecef; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.4s; }
+        .step-active .dot { border-color: #0d6efd; background-color: #0d6efd; color: white; box-shadow: 0 0 15px rgba(13, 110, 253, 0.4); }
+        .step-active .status-label { color: #0d6efd; font-weight: bold; }
+        .status-label { font-size: 13px; margin-top: 10px; font-weight: 600; color: #adb5bd; }
+        .item-card { border-bottom: 1px solid #f8f9fa; padding: 15px 0; }
+        .item-card:last-child { border-bottom: none; }
+    </style>
+</head>
+<body class="bg-light">
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 class="fw-bold">Track Your Order</h3>
+                        <p class="text-muted">Order ID: <span class="text-primary fw-bold">#{{ order.order_id }}</span></p>
+                    </div>
+                    <a href="/" class="btn btn-outline-dark rounded-pill px-4">Back to Shop</a>
+                </div>
+
+                <div class="card tracking-card p-4 p-md-5 mb-4">
+                    <div class="position-relative d-flex justify-content-between">
+                        <div class="track-line"></div>
+                        
+                        <div class="track-step text-center step-active">
+                            <div class="dot"><i class="fas fa-shopping-bag"></i></div>
+                            <div class="status-label">Order Placed</div>
+                            <small class="text-muted d-block">{{ order.created_at|date:"D, d M" }}</small>
+                        </div>
+
+                        <div class="track-step text-center {% if order.status == 'Shipped' or order.status == 'Delivered' %}step-active{% endif %}">
+                            <div class="dot"><i class="fas fa-shipping-fast"></i></div>
+                            <div class="status-label">Shipped</div>
+                        </div>
+
+                        <div class="track-step text-center {% if order.status == 'Delivered' %}step-active{% endif %}">
+                            <div class="dot"><i class="fas fa-check-double"></i></div>
+                            <div class="status-label">Delivered</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="card tracking-card p-4 mb-4">
+                            <h5 class="fw-bold mb-4">Items Summary</h5>
+                            {% for item in order.items.all %}
+                            <div class="item-card d-flex align-items-center">
+                                <div class="ms-3 flex-grow-1">
+                                    <h6 class="mb-0 fw-bold">{{ item.product.name }}</h6>
+                                    <small class="text-muted">Qty: {{ item.quantity }} x ₹{{ item.price }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="fw-bold">₹{{ item.price }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Total Amount Paid</span>
+                                <h4 class="text-success fw-bold">₹{{ order.amount }}</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="card tracking-card p-4 mb-4 bg-primary text-white">
+                            <h5 class="fw-bold mb-3">Shipping Address</h5>
+                            <p class="mb-1 fw-bold">{{ order.full_name }}</p>
+                            
+                            <p class="mb-0 opacity-75 small">{{ order.shipping_address }}</p>
+                            <p class="mb-3 opacity-75 small">{{ order.state }}, {{ order.pincode }}</p>
+                            
+                            <hr class="opacity-25">
+                            <h6 class="fw-bold mb-2">Payment Info</h6>
+                            <p class="mb-0 small"><i class="fas fa-credit-card me-2"></i>Paid via Razorpay</p>
+                            <p class="small opacity-75">ID: {{ order.payment_id }}</p>
+                        </div>
+
+                        <div class="card tracking-card p-4 text-center">
+                            <p class="text-muted mb-2">Need help with your order?</p>
+                            <a href="{% url 'contact_us' %}" class="btn btn-light rounded-pill w-100">Contact Support</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

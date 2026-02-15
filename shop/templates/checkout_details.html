@@ -1,0 +1,94 @@
+<style>
+    /* Custom CSS to beautify the form */
+    .checkout-card {
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        max-width: 500px;
+        margin: 50px auto;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 12px 15px;
+        border: 1px solid #dee2e6;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+
+    .btn-checkout {
+        background: linear-gradient(45deg, #0d6efd, #004dc0);
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: transform 0.2s ease;
+    }
+
+    .btn-checkout:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 5px;
+    }
+</style>
+
+<div class="container">
+    <div class="checkout-card">
+        <h3 class="text-center mb-4">Shipping Details</h3>
+        <p class="text-muted text-center mb-4 small">Enter your info to receive WhatsApp & Email updates</p>
+        
+        <form method="POST" action="{% url 'checkout_view' %}">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" name="full_name" placeholder="e.g. Rahul Sharma" required class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email Address</label>
+                <input type="email" name="email" placeholder="name@example.com" required class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Shipping Address</label>
+                <input type="text" name="address" placeholder="House No, Street, Landmark" required class="form-control">
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">State</label>
+                    <input type="text" name="state" placeholder="e.g. Maharashtra" required class="form-control">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Pincode</label>
+                    <input type="text" name="pincode" placeholder="e.g. 411001" required class="form-control">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">WhatsApp Number</label>
+                <input type="text" name="phone" placeholder="+919876543210" required class="form-control">
+                <div class="form-text">Include country code for tracking alerts.</div>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-primary btn-checkout">
+                    Continue to Payment →
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

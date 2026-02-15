@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - AI Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
+        .order-card { border: none; border-radius: 15px; transition: transform 0.2s; background: white; }
+        .order-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+        .status-badge { padding: 6px 12px; border-radius: 50px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-shipped { background: #cfe2ff; color: #084298; }
+        .status-delivered { background: #d1e7dd; color: #0f5132; }
+        .status-cancelled { background: #f8d7da; color: #842029; }
+        .btn-track { border-radius: 10px; font-weight: 600; padding: 8px 20px; transition: 0.3s; }
+    </style>
+</head>
+<body>
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="fw-bold"><i class="fas fa-box-open me-2"></i>My Order History</h2>
+            <p class="text-muted">Manage and track your recent purchases</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="/" class="btn btn-dark rounded-pill shadow-sm mt-2">Continue Shopping</a>
+        </div>
+    </div>
+
+    {% if orders %}
+        <div class="row">
+            {% for order in orders %}
+            <div class="col-12 mb-3">
+                <div class="card order-card shadow-sm p-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <span class="text-muted small">Order ID</span>
+                            <h6 class="fw-bold mb-0">#{{ order.order_id|default:order.id }}</h6>
+                            <small class="text-muted">{{ order.created_at|date:"d M, Y" }}</small>
+                        </div>
+
+                        <div class="col-md-2 text-center text-md-start">
+                            <span class="text-muted small d-block">Total Amount</span>
+                            <span class="fw-bold text-dark">₹{{ order.amount }}</span>
+                        </div>
+
+                        <div class="col-md-3 text-center">
+                            <span class="status-badge 
+                                {% if order.status == 'Pending' %}status-pending
+                                {% elif order.status == 'Shipped' %}status-shipped
+                                {% elif order.status == 'Delivered' %}status-delivered
+                                {% else %}status-cancelled{% endif %}">
+                                {{ order.status }}
+                            </span>
+                        </div>
+
+                        <div class="col-md-4 text-end">
+                            <a href="{% url 'order_tracking' order.order_id %}" class="btn btn-primary btn-track me-2">
+                                <i class="fas fa-map-marker-alt me-1"></i> Track Order
+                            </a>
+                            <a href="{% url 'generate_pdf' order.id %}" target="_blank" class="btn btn-outline-secondary">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-shopping-cart fa-4x text-light mb-3"></i>
+            <h4>You haven't placed any orders yet!</h4>
+            <p class="text-muted">Start shopping to see your orders here.</p>
+            <a href="/" class="btn btn-primary rounded-pill px-4">Browse Products</a>
+        </div>
+    {% endif %}
+</div>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Failed - AI Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; height: 100vh; display: flex; align-items: center; }
+        .error-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: auto;
+            text-align: center;
+        }
+        .error-icon { color: #dc3545; font-size: 80px; margin-bottom: 20px; }
+        .btn-retry { background: #dc3545; color: white; border-radius: 8px; padding: 12px 30px; font-weight: 600; text-decoration: none; display: inline-block; transition: 0.3s; }
+        .btn-retry:hover { background: #bb2d3b; color: white; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+    <div class="error-card">
+        <div class="error-icon">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <h2 class="fw-bold mb-3">Payment Failed</h2>
+        <p class="text-muted mb-4">
+            We couldn't process your payment. This could be due to a technical issue or insufficient funds. Don't worry, no money was deducted from your account.
+        </p>
+        
+        <div class="d-grid gap-2">
+            <a href="/cart/" class="btn-retry">Try Again</a>
+            <a href="/" class="text-muted small mt-3">Return to Home</a>
+        </div>
+    </div>
+
+</body>
+</html>
